@@ -1,0 +1,45 @@
+name: Go Release with Cross-Compilation
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    name: Build for ${{ matrix.os }}-${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goversion: ['1.22.1']
+        os: [linux, darwin, windows]
+        arch: [amd64, arm64]
+        include:
+          - os: windows
+            ext: .exe
+          - os: linux
+            ext: ''
+          - os: darwin
+            ext: ''
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.goversion }}
+
+    - name: Build
+      run: |
+        mkdir ${{ matrix.os }}-${{ matrix.arch }}
+        GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -v -o ${{ matrix.os }}-${{ matrix.arch }}/git-credential-store-json${{ matrix.ext }} .
+        zip -r git-credential-store-json_${{ matrix.os }}-${{ matrix.arch }}.zip ${{ matrix.os }}-${{ matrix.arch }}/git-credential-store-json${{ matrix.ext }}
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./git-credential-store-json_${{ matrix.os }}-${{ matrix.arch }}.zip
+        asset_name: git-credential-store-json_${{ matrix.os }}-${{ matrix.arch }}.zip
+        asset_content_type: application/zip

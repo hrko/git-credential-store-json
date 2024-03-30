@@ -2,6 +2,20 @@
 Helper to store Git credentials on disk in JSON format.
 
 ## Installation
+### Pre-built binaries
+Pre-built binaries are available on the [releases page](https://github.com/hrko/git-credential-store-json/releases). Download the binary for your platform and place it in a directory that is in your `PATH`.
+
+```sh
+# Example for Linux (x86_64)
+# Replace `<tag>` with the latest release version
+wget https://github.com/hrko/git-credential-store-json/releases/download/<tag>/git-credential-store-json_linux-amd64.zip
+unzip git-credential-store-json_linux-amd64.zip
+sudo mv git-credential-store-json /usr/local/bin/
+sudo chmod +x /usr/local/bin/git-credential-store-json
+```
+
+### From source
+Alternatively, you can install the helper using `go get`:
 ```sh
 go install github.com/hrko/git-credential-store-json
 ```
